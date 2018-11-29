@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const Rule = new Schema({
+const RuleSchema = new Schema({
   durationunits: String,
   traveldaysx: Number,
   preshootx: Number,
@@ -12,4 +12,4 @@ const Rule = new Schema({
   overtime2x: Number
 });
 
-module.exports = Rule;
+module.exports = Rule = mongoose.model("projects", RuleSchema);

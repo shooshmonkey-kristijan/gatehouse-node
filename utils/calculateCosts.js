@@ -1,17 +1,21 @@
-async function calculateCost(itemcost, units, utilisation) {
-  const exchangeRate = 14;
-  const markup = 10;
-
-  let rands =
-    units > 1 ? units * itemcost * utilisation : itemcost * utilisation;
+async function calculateCost(
+  itemcost,
+  units = 1,
+  utilisation,
+  exchangeRate,
+  markup
+) {
+  let rands = units * itemcost * utilisation;
 
   const euro = Math.ceil(rands / exchangeRate);
 
+  //console.log(rands);
+
   const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
 
-  //   console.log("RANDS", rands);
-  //   console.log("EURO", euro);
-  //   console.log("EUROMARKUP", euroMarkup);
+  // console.log("RANDS", rands);
+  // console.log("EURO", euro);
+  // console.log("EUROMARKUP", euroMarkup);
 
   return {
     RANDS: rands,
@@ -20,10 +24,8 @@ async function calculateCost(itemcost, units, utilisation) {
   };
 }
 
-//calculateCost(5562, 0, 2);
-
 async function calculateCrewSalaries(
-  units,
+  units = 1,
   rate,
   travelDays,
   preShoot,
@@ -31,34 +33,32 @@ async function calculateCrewSalaries(
   postShoot,
   turnAround,
   oT1X,
-  oT2x
+  oT2x,
+  exchangeRate,
+  markup,
+  director
 ) {
-  const exchangeRate = 14;
-  const markup = 10;
-
+  let euroMarkup;
   let rands =
-    units === 0
-      ? rate *
-        (travelDays / 2 +
-          (preShoot + shoot + postShoot) +
-          turnAround / 10 +
-          (oT1X / 10) * 1.5 +
-          (oT2x / 10) * 2)
-      : units *
-        (rate *
-          (travelDays / 2 +
-            (preShoot + shoot + postShoot) +
-            turnAround / 10 +
-            (oT1X / 10) * 1.5 +
-            (oT2x / 10) * 2));
+    units *
+    (rate *
+      (travelDays / 2 +
+        (preShoot + shoot + postShoot) +
+        turnAround / 10 +
+        (oT1X / 10) * 1.5 +
+        (oT2x / 10) * 2));
 
   const euro = Math.ceil(rands / exchangeRate);
 
-  const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+  if (director === "Director") {
+    euroMarkup = euro;
+  } else {
+    euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+  }
 
-  //   console.log("RANDS", rands);
-  //   console.log("EURO", euro);
-  //   console.log("EUROMARKUP", euroMarkup);
+  console.log("RANDS", rands);
+  console.log("EURO", euro);
+  console.log("EUROMARKUP", euroMarkup);
 
   return {
     RANDS: rands,
@@ -67,8 +67,197 @@ async function calculateCrewSalaries(
   };
 }
 
-//calculateCrewSalaries(0, 4500, 0, 0, 2.5, 0, 0, 0, 0);
+async function calculateTransportAndSybtotalCost(
+  units,
+  itemcost,
+  prep,
+  shoot,
+  wrap,
+  exchangeRate,
+  markup
+) {
+  let rands =
+    units > 1
+      ? units * itemcost * (prep + shoot + wrap)
+      : itemcost * (prep + shoot + wrap);
+
+  const euro = Math.ceil(rands / exchangeRate);
+
+  const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+
+  return {
+    RANDS: rands,
+    EURO: euro,
+    EUROMARKUP: euroMarkup
+  };
+}
+
+async function calculateInssuranceSubtotalLightingEquipCost(
+  units = 1,
+  subtotalRandsLightingEquipment,
+  generator240kva,
+  generator65kva,
+  exchangeRate,
+  markup
+) {
+  let rands =
+    subtotalRandsLightingEquipment + (generator240kva + generator65kva) * units;
+
+  const euro = Math.ceil(rands / exchangeRate);
+
+  const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+
+  return {
+    RANDS: rands,
+    EURO: euro,
+    EUROMARKUP: euroMarkup
+  };
+}
+
+async function calculateInssuranceSubtotalLightingDiscount(
+  units = 1,
+  subtotalRandsLightingEquipment,
+  exchangeRate,
+  markup
+) {
+  let rands = units * subtotalRandsLightingEquipment;
+
+  const euro = Math.ceil(rands / exchangeRate);
+
+  const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+
+  return {
+    RANDS: rands,
+    EURO: euro,
+    EUROMARKUP: euroMarkup
+  };
+}
+
+async function calculateCameraVtEquipDiscountCamera(
+  units = 1,
+  subtotalRandsLencsing,
+  exchangeRate,
+  markup
+) {
+  let rands = subtotalRandsLencsing * units;
+
+  const euro = Math.ceil(rands / exchangeRate);
+
+  const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+
+  return {
+    RANDS: rands,
+    EURO: euro,
+    EUROMARKUP: euroMarkup
+  };
+}
+
+async function calculateCameraVtEquipDiscountVideo(
+  subtotalRandsVideoEquip,
+  units = 1,
+  exchangeRate,
+  markup
+) {
+  let rands = subtotalRandsVideoEquip * units;
+
+  const euro = Math.ceil(rands / exchangeRate);
+
+  const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+
+  return {
+    RANDS: rands,
+    EURO: euro,
+    EUROMARKUP: euroMarkup
+  };
+}
+
+async function calculateCameraVtEquipIssurance(
+  subtotalRandsVideoEquip,
+  subtotalRandsLencsing,
+  subtotalCameraRands,
+  microforceZoomControl,
+  prestonDigitalRemote,
+  units = 1,
+  exchangeRate,
+  markup
+) {
+  let rands =
+    (subtotalRandsVideoEquip +
+      subtotalRandsLencsing +
+      subtotalCameraRands +
+      (microforceZoomControl + prestonDigitalRemote)) *
+    units;
+
+  const euro = Math.ceil(rands / exchangeRate);
+
+  const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+
+  return {
+    RANDS: rands,
+    EURO: euro,
+    EUROMARKUP: euroMarkup
+  };
+}
+
+async function calculateTransportationCost(
+  units = 1,
+  exchangeRate,
+  markup,
+  itemcost,
+  prep,
+  shoot,
+  wrap
+) {
+  let rands = units * itemcost * (prep + shoot + wrap);
+
+  const euro = Math.ceil(rands / exchangeRate);
+  const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+
+  return {
+    RANDS: rands,
+    EURO: euro,
+    EUROMARKUP: euroMarkup
+  };
+}
+
+async function calculateTalentFees(
+  units,
+  dayRate,
+  feeTravel,
+  fullDayRehearse,
+  shootDays,
+  overTime,
+  usageFeePerPerson,
+  markup,
+  exchangeRate
+) {
+  let rands =
+    units *
+    (dayRate * (feeTravel / 2 + fullDayRehearse + shootDays + overTime / 10) +
+      usageFeePerPerson);
+
+  const euro = Math.floor(rands / exchangeRate);
+
+  const euroMarkup = Math.floor((euro * (100 + markup)) / 100);
+
+  console.log("RANDS", rands, "EURO", euro, "EUROMARKUP", euroMarkup);
+
+  return {
+    RANDS: rands,
+    EURO: euro,
+    EUROMARKUP: euroMarkup
+  };
+}
+
 module.exports = {
   calculateCost,
-  calculateCrewSalaries
+  calculateCrewSalaries,
+  calculateTransportAndSybtotalCost,
+  calculateInssuranceSubtotalLightingEquipCost,
+  calculateInssuranceSubtotalLightingDiscount,
+  calculateCameraVtEquipDiscountCamera,
+  calculateCameraVtEquipDiscountVideo,
+  calculateCameraVtEquipIssurance,
+  calculateTransportationCost,
+  calculateTalentFees
 };

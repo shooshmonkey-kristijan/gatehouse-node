@@ -33,7 +33,7 @@ router.post("/register", (req, res) => {
   });
 });
 
-// GET api/users/login
+// POST api/users/login
 router.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
