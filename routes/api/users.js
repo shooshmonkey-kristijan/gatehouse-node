@@ -1,20 +1,23 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const keys = require("../../config/keys");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const keys = require('../../config/keys');
 
-const User = require("../../models/User");
+const User = require('../../models/User');
 
 // POST api/users/register
-router.post("/register", (req, res) => {
+router.post('/register', (req, res) => {
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
-      return res.status(400).json({ emailexist: "Email already exists" });
+      return res.status(400).json({
+        error: true,
+        errorMsg: 'Email already exists',
+      });
     } else {
       const newUser = new User({
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
       });
 
       bcrypt.genSalt(10, (err, salt) => {
@@ -29,8 +32,8 @@ router.post("/register", (req, res) => {
             .catch(err =>
               res.status(400).json({
                 error: true,
-                errorMsg: "User cant register"
-              })
+                errorMsg: 'User cant register',
+              }),
             );
         });
       });
@@ -39,7 +42,7 @@ router.post("/register", (req, res) => {
 });
 
 // POST api/users/login
-router.post("/login", (req, res) => {
+router.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -47,7 +50,7 @@ router.post("/login", (req, res) => {
     if (!user) {
       return res.status(404).json({
         error: true,
-        errorMsg: "User Not Found"
+        errorMsg: 'User Not Found',
       });
     }
 
@@ -62,14 +65,14 @@ router.post("/login", (req, res) => {
           (err, token) => {
             res.json({
               success: true,
-              token: "Bearer " + token
+              token: 'Bearer ' + token,
             });
-          }
+          },
         );
       } else {
         return res.status(400).json({
           error: true,
-          errorMsg: "Password Incorrect"
+          errorMsg: 'Password Incorrect',
         });
       }
     });
