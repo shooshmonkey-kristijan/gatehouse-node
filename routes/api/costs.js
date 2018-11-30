@@ -48,7 +48,12 @@ router.post("/", async (req, res) => {
 
       res.json({ budgets });
     })
-    .catch(err => {});
+    .catch(err => {
+      res.status(400).json({
+        error: true,
+        errorMsg: "Costs for item not added"
+      });
+    });
 });
 
 //GET /api/costs/:id
@@ -66,7 +71,12 @@ router.get("/:id", async (req, res) => {
         budgets.push({ OriginalCost: originalCost });
         res.json({ budgets });
       })
-      .catch(err => {});
+      .catch(err => {
+        res.status(404).json({
+          error: true,
+          errorMsg: "Costs for item not found"
+        });
+      });
   });
 });
 

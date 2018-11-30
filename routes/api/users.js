@@ -26,7 +26,12 @@ router.post("/register", (req, res) => {
           newUser
             .save()
             .then(user => res.json(user))
-            .catch(err => console.log(err));
+            .catch(err =>
+              res.status(400).json({
+                error: true,
+                errorMsg: "User cant register"
+              })
+            );
         });
       });
     }
@@ -41,7 +46,8 @@ router.post("/login", (req, res) => {
   User.findOne({ email }).then(user => {
     if (!user) {
       return res.status(404).json({
-        usernotfound: "User Not Found"
+        error: true,
+        errorMsg: "User Not Found"
       });
     }
 
@@ -62,7 +68,8 @@ router.post("/login", (req, res) => {
         );
       } else {
         return res.status(400).json({
-          passwordincorrect: "Password Incorrect"
+          error: true,
+          errorMsg: "Password Incorrect"
         });
       }
     });

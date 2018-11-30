@@ -19,7 +19,8 @@ router.get("/:id", (req, res) => {
     })
     .catch(err =>
       res.status(404).json({
-        itemsnotfound: "No Items Found"
+        error: true,
+        errorMsg: "No Items Found"
       })
     );
 });
@@ -40,8 +41,9 @@ router.post("/", async (req, res) => {
       res.json(item);
     })
     .catch(err =>
-      res.json({
-        itemnotadded: "Item Not Added"
+      res.status(400).json({
+        error: true,
+        errorMsg: "Item Not Added"
       })
     );
 });
@@ -53,8 +55,9 @@ router.delete("/:id", (req, res) => {
       .remove()
       .then(() => res.json({ success: true }))
       .catch(err =>
-        res.json({
-          deleteitemerror: "Item was not deleted"
+        res.status(400).json({
+          error: true,
+          errorMsg: "Item was not deleted"
         })
       );
   });

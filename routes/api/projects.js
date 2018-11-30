@@ -33,8 +33,9 @@ router.post("/", (req, res) => {
     .save()
     .then(project => res.json(project))
     .catch(err =>
-      res.json({
-        projectnotadded: "Project Not Added"
+      res.status(400).json({
+        error: true,
+        errorMsg: "Project Not Added"
       })
     );
 });
@@ -47,7 +48,8 @@ router.get("/project/:id", (req, res) => {
     .then(project => res.json(project))
     .catch(err => {
       res.status(404).json({
-        projectsnotfound: "No Projects Found"
+        error: true,
+        errorMsg: "No Projects Found"
       });
     });
 });
@@ -60,7 +62,8 @@ router.get("/:id", (req, res) => {
     .then(project => res.json(project))
     .catch(err =>
       res.status(404).json({
-        projectsnotfound: "No Project Found"
+        error: true,
+        errorMsg: "No Project Found"
       })
     );
 });
@@ -75,8 +78,9 @@ router.delete("/:id", (req, res) => {
       .remove()
       .then(() => res.json({ success: true }))
       .catch(err => {
-        res.json({
-          deleteprojecterror: "Project was not deleted"
+        res.status(400).json({
+          error: true,
+          errorMsg: "Project was not deleted"
         });
       });
   });
