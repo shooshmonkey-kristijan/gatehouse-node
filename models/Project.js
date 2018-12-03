@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-
+const mongoose = require('mongoose');
+const version = require('mongoose-version');
 const Schema = mongoose.Schema;
 
 const ProjectSchema = new Schema({
@@ -12,7 +12,8 @@ const ProjectSchema = new Schema({
   notes: String,
   noshootdays: Number,
   inssurancerate: Number,
-  markup: Number
+  markup: Number,
+  timestamp: Date,
 });
-
-module.exports = Project = mongoose.model("projects", ProjectSchema);
+ProjectSchema.plugin(version, { collection: 'Project__versions' });
+module.exports = Project = mongoose.model('projects', ProjectSchema);

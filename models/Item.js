@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-
+const mongoose = require('mongoose');
+const version = require('mongoose-version');
 const Schema = mongoose.Schema;
 
 const ItemSchema = new Schema({
@@ -10,7 +10,9 @@ const ItemSchema = new Schema({
   // occurence: Occurence,
   qtyutil: Number,
   itemCost: Number,
-  cost: {}
+  parentId: String,
+  timestamp: Date,
 });
+ItemSchema.plugin(version, { collection: 'Item__versions' });
 
-module.exports = Item = mongoose.model("items", ItemSchema);
+module.exports = Item = mongoose.model('items', ItemSchema);

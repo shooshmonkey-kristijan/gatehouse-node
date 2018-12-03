@@ -1,7 +1,8 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
+const { clearVersions } = require('../../utils/versionMaintenance');
 
-const Project = require("../../models/Project");
+const Project = require('../../models/Project');
 
 // GET api/projects
 // router.get("/", (req, res) => {
@@ -15,7 +16,7 @@ const Project = require("../../models/Project");
 // });
 
 // POST api/projects
-router.post("/", (req, res) => {
+router.post('/', (req, res) => {
   const newProject = new Project({
     userId: req.body.userId,
     contact: req.body.contact,
@@ -26,7 +27,8 @@ router.post("/", (req, res) => {
     notes: req.body.notes,
     noshootdays: req.body.noshootdays,
     inssurancerate: req.body.inssurancerate,
-    markup: req.body.markup
+    markup: req.body.markup,
+    timestamp: new Date(),
   });
 
   newProject
@@ -35,13 +37,32 @@ router.post("/", (req, res) => {
     .catch(err =>
       res.status(400).json({
         error: true,
-        errorMsg: "Project Not Added"
-      })
+        errorMsg: 'Project Not Added',
+      }),
     );
 });
 
+// POST api/projects
+router.post('/update/:id', (req, res) => {
+  const projectId = req.params._id;
+
+  Project.findOne({ projectId })
+    .then(project => {
+      project = Object.assign(project, req.body);
+      project.timestamp = new Date();
+      project.save();
+      res.json(project);
+    })
+    .catch(err => {
+      res.status(404).json({
+        error: true,
+        errorMsg: 'No Projects Found',
+      });
+    });
+});
+
 // GET api/projects/project
-router.get("/project/:id", (req, res) => {
+router.get('/project/:id', (req, res) => {
   const projectId = req.params._id;
   //console.log(projectId);
   Project.findOne({ projectId })
@@ -49,13 +70,17 @@ router.get("/project/:id", (req, res) => {
     .catch(err => {
       res.status(404).json({
         error: true,
-        errorMsg: "No Projects Found"
+        errorMsg: 'No Projects Found',
       });
     });
 });
-
 // GET api/projects by Project(userId)
-router.get("/:id", (req, res) => {
+router.get('/maintainprojects/all', (req, res) => {
+  res.send('working');
+  clearVersions('Project');
+});
+// GET api/projects by Project(userId)
+router.get('/:id', (req, res) => {
   //console.log(req.params.id);
   const userId = req.params.id;
   Project.find({ userId })
@@ -63,16 +88,16 @@ router.get("/:id", (req, res) => {
     .catch(err =>
       res.status(404).json({
         error: true,
-        errorMsg: "No Project Found"
-      })
+        errorMsg: 'No Project Found',
+      }),
     );
 });
 
 // DELETE api/projects by Project(projectid)
-router.delete("/:id", (req, res) => {
+router.delete('/:id', (req, res) => {
   const projectId = req.params.id;
   //console.log(projectId);
-  Project.findOne({ _id: projectId }).then(project => {
+  Project.findOne({ projectId }).then(project => {
     // console.log(project);
     project
       .remove()
@@ -80,7 +105,7 @@ router.delete("/:id", (req, res) => {
       .catch(err => {
         res.status(400).json({
           error: true,
-          errorMsg: "Project was not deleted"
+          errorMsg: 'Project was not deleted',
         });
       });
   });
